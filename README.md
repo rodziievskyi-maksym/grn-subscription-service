@@ -1,2 +1,3 @@
 # go-genesis-case-task
-Service allows to get email notification on new releases of subscribed github repositories 
+
+GitHub Release Notifier: A Go-based service that monitors repositories and sends email alerts for new releases.
