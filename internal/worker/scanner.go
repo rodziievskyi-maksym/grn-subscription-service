@@ -18,7 +18,7 @@ import (
 type Scanner struct {
 	repository    repository.SubscriptionRepositoryContract
 	github        github.Provider
-	emailProvider email.EmailProvider
+	emailProvider email.Provider
 	scheduler     gocron.Scheduler
 
 	rateLimitUntil time.Time
@@ -35,7 +35,7 @@ func NewScanner(repo repository.SubscriptionRepositoryContract, gh github.Provid
 		repository:    repo,
 		github:        gh,
 		scheduler:     scheduler,
-		emailProvider: email.NewSmtpProvider(),
+		emailProvider: email.NewSMTPProvider(),
 	}, nil
 }
 
@@ -59,18 +59,21 @@ func (s *Scanner) Run(ctx context.Context) error {
 
 func (s *Scanner) checkUpdates(ctx context.Context) {
 	s.mu.Lock()
+
 	until := s.rateLimitUntil
+
 	defer s.mu.Unlock()
 
 	if time.Now().Before(until) {
 		slog.Warn("Scanner: skipping check due to active rate limit",
 			"until", until.Format(time.RFC3339))
+
 		return
 	}
 
 	slog.Info("Scanner: checking updates...")
 
-	//get unique repositories
+	// get unique repositories
 	repositories, err := s.repository.GetUniqueRepositories(ctx)
 	if err != nil {
 		slog.Error("Scanner: failed to get unique repositories", "error", err)
@@ -95,9 +98,12 @@ func (s *Scanner) checkUpdates(ctx context.Context) {
 				s.mu.Unlock()
 
 				slog.Warn("Scanner: pausing due to rate limit", "until", rlErr.ResetTime)
+
 				return
 			}
+
 			slog.Error("Scanner: GitHub API error", "repo", repoPath, "error", err)
+
 			continue
 		}
 
@@ -115,7 +121,7 @@ func (s *Scanner) checkUpdates(ctx context.Context) {
 		slog.Info("Scanner: Found updates", "repo", repoPath, "count", len(outdatedSubs), "new_tag", newTag)
 
 		for _, sub := range outdatedSubs {
-			err := s.emailProvider.SendReleaseNotification(ctx, sub.Email, sub.Repository, newTag)
+			err := s.emailProvider.SendReleaseNotification(sub.Email, sub.Repository, newTag)
 			if err != nil {
 				slog.Error("Failed to send email", "to", sub.Email, "error", err)
 				continue
@@ -127,5 +133,4 @@ func (s *Scanner) checkUpdates(ctx context.Context) {
 			}
 		}
 	}
-
 }

@@ -1,14 +1,13 @@
 package email
 
 import (
-	"context"
 	"fmt"
 	"net/smtp"
 
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/config"
 )
 
-type SmtpProvider struct {
+type SMTPProvider struct {
 	host     string
 	port     string
 	username string
@@ -16,17 +15,17 @@ type SmtpProvider struct {
 	from     string
 }
 
-func NewSmtpProvider() *SmtpProvider {
-	return &SmtpProvider{
-		host:     config.Cfg().SmtpHost,
-		port:     config.Cfg().SmtpPort,
-		username: config.Cfg().SmtpUser,
-		password: config.Cfg().SmtpPass,
-		from:     config.Cfg().SmtpFrom,
+func NewSMTPProvider() *SMTPProvider {
+	return &SMTPProvider{
+		host:     config.Cfg().SMTPHost,
+		port:     config.Cfg().SMTPPort,
+		username: config.Cfg().SMTPUser,
+		password: config.Cfg().SMTPPass,
+		from:     config.Cfg().SMTPFrom,
 	}
 }
 
-func (p *SmtpProvider) SendReleaseNotification(ctx context.Context, toEmail, repository, tag string) error {
+func (p *SMTPProvider) SendReleaseNotification(toEmail, repository, tag string) error {
 	subject := fmt.Sprintf("Subject: New Release for %s!\n", repository)
 	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 

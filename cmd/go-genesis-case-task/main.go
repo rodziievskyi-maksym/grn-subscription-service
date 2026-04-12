@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -23,18 +24,25 @@ import (
 )
 
 func main() {
+	if err := run(); err != nil {
+		slog.Error("Application stopped with error", "error", err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
 	initCtx, initCancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer initCancel()
 
 	validation := validator.New()
 
 	if err := config.NewConfig(validation); err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		return fmt.Errorf("failed to load config: %w", err)
 	}
 
 	client, err := postgres.NewPostgreClient(initCtx, config.Cfg().PostgresDSN)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		return fmt.Errorf("failed to connect to database: %w", err)
 	}
 	defer client.Close()
 
@@ -48,7 +56,7 @@ func main() {
 
 	scanner, err := worker.NewScanner(subRepo, ghClient)
 	if err != nil {
-		log.Fatalf("Failed to create scanner: %v", err)
+		return fmt.Errorf("failed to create scanner: %w", err)
 	}
 
 	go func() {
@@ -61,6 +69,7 @@ func main() {
 
 	go func() {
 		slog.Info("Starting HTTP server", "port", config.Cfg().Port)
+
 		if err := srv.Run(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("Server Run error: %v", err)
 		}
@@ -83,4 +92,6 @@ func main() {
 	}
 
 	slog.Info("Application successfully stopped")
+
+	return nil
 }

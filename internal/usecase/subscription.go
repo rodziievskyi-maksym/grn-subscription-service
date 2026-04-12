@@ -33,6 +33,7 @@ func (s *SubscriptionUseCase) Subscribe(ctx context.Context, email, repository s
 	if len(parts) != 2 {
 		return nil, ErrInvalidRepositoryFormat
 	}
+
 	owner, repoName := parts[0], parts[1]
 
 	tag, err := s.github.GetLatestTag(ctx, owner, repoName)

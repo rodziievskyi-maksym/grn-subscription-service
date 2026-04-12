@@ -20,23 +20,19 @@ var (
 )
 
 type Config struct {
-	//App
 	Host            string        `env:"HOST" default:"0.0.0.0" validate:"required"`
 	Port            string        `env:"PORT" default:"8080" validate:"required"`
 	Env             string        `env:"ENV" default:"development" validate:"required"`
 	ScannerInterval time.Duration `env:"SCANNER_INTERVAL" default:"5m" validate:"required"`
 
-	//SMTP
-	SmtpHost string `env:"SMTP_HOST" validate:"required"`
-	SmtpPort string `env:"SMTP_PORT" validate:"required"`
-	SmtpUser string `env:"SMTP_USER" validate:"required"`
-	SmtpPass string `env:"SMTP_PASSW" validate:"required"`
-	SmtpFrom string `env:"SMTP_FROM"`
+	SMTPHost string `env:"SMTP_HOST" validate:"required"`
+	SMTPPort string `env:"SMTP_PORT" validate:"required"`
+	SMTPUser string `env:"SMTP_USER" validate:"required"`
+	SMTPPass string `env:"SMTP_PASSW" validate:"required"`
+	SMTPFrom string `env:"SMTP_FROM"`
 
-	//Database
 	PostgresDSN string `env:"POSTGRES_DSN" validate:"required"`
 
-	//GitHub
 	GitHubToken string `env:"GITHUB_TOKEN" validate:"required"`
 }
 
@@ -56,22 +52,19 @@ func NewConfig(validator *validator.Validate, envPath ...string) error {
 		}
 
 		cfg := &Config{
-			//App
 			Host:            os.Getenv("HOST"),
 			Port:            os.Getenv("PORT"),
 			Env:             os.Getenv("ENV"),
 			ScannerInterval: scannerInterval,
 
-			//SMTP
-			SmtpHost: os.Getenv("SMTP_HOST"),
-			SmtpPort: os.Getenv("SMTP_PORT"),
-			SmtpUser: os.Getenv("SMTP_USER"),
-			SmtpPass: os.Getenv("SMTP_PASS"),
-			SmtpFrom: os.Getenv("SMTP_FROM"),
+			SMTPHost: os.Getenv("SMTP_HOST"),
+			SMTPPort: os.Getenv("SMTP_PORT"),
+			SMTPUser: os.Getenv("SMTP_USER"),
+			SMTPPass: os.Getenv("SMTP_PASS"),
+			SMTPFrom: os.Getenv("SMTP_FROM"),
 
-			//Database
 			PostgresDSN: os.Getenv("POSTGRES_DSN"),
-			//GitHub
+
 			GitHubToken: os.Getenv("GITHUB_TOKEN"),
 		}
 

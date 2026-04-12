@@ -57,6 +57,7 @@ func (c *client) GetLatestTag(ctx context.Context, owner, repo string) (string, 
 		}
 
 		slog.Error("github api error", "owner", owner, "repo", repo, "err", err)
+
 		return "", err
 	}
 

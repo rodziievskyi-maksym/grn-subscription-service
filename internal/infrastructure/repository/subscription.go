@@ -36,7 +36,6 @@ func (r *SubscriptionRepository) CreateSubscription(ctx context.Context, subscri
 		subscription.CreatedAt,
 		subscription.UpdatedAt,
 	).Scan(&subscription.ID)
-
 	if err != nil {
 		slog.Error("failed to create or update subscription", "error", err, "email", subscription.Email)
 		return fmt.Errorf("failed to create subscription on data layer: %w", err)
@@ -55,18 +54,23 @@ func (r *SubscriptionRepository) GetUniqueRepositories(ctx context.Context) ([]s
 	defer rows.Close()
 
 	var repos []string
+
 	for rows.Next() {
 		var repo string
 		if err := rows.Scan(&repo); err != nil {
 			return nil, fmt.Errorf("failed to scan repository: %w", err)
 		}
+
 		repos = append(repos, repo)
 	}
 
 	return repos, nil
 }
 
-func (r *SubscriptionRepository) GetOutdatedSubscriptions(ctx context.Context, repository, tag string) ([]domain.Subscription, error) {
+func (r *SubscriptionRepository) GetOutdatedSubscriptions(
+	ctx context.Context,
+	repository, tag string,
+) ([]domain.Subscription, error) {
 	query := `
 		SELECT id, email, repository, last_seen_tag 
 		FROM subscriptions 
@@ -79,11 +83,13 @@ func (r *SubscriptionRepository) GetOutdatedSubscriptions(ctx context.Context, r
 	defer rows.Close()
 
 	var subs []domain.Subscription
+
 	for rows.Next() {
 		var s domain.Subscription
 		if err := rows.Scan(&s.ID, &s.Email, &s.Repository, &s.LastSeenTag); err != nil {
 			return nil, fmt.Errorf("failed to scan subscription: %w", err)
 		}
+
 		subs = append(subs, s)
 	}
 

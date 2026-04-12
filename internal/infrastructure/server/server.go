@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/config"
@@ -33,8 +34,9 @@ func NewHTTPServer(sh *handler.SubscriptionHandler) *Server {
 	api.POST("/subscribe", sh.Subscribe)
 
 	httpServer := &http.Server{
-		Addr:    config.GetServerAddress(),
-		Handler: router,
+		Addr:              config.GetServerAddress(),
+		Handler:           router,
+		ReadHeaderTimeout: 5 * time.Second,
 	}
 
 	return &Server{
@@ -48,8 +50,4 @@ func (s *Server) Run() error {
 
 func (s *Server) Shutdown(ctx context.Context) error {
 	return s.server.Shutdown(ctx)
-}
-
-func errorResponse(err error) gin.H {
-	return gin.H{"error": err.Error()}
 }
