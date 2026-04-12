@@ -26,5 +26,5 @@ func NewRedisClient(ctx context.Context, addr, password string) (*Client, error)
 }
 
 func (r *Client) Close() {
-	r.Client.Close()
+	_ = r.Client.Close()
 }

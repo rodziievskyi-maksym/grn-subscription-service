@@ -115,10 +115,6 @@ func Cfg() *Config {
 	return instance
 }
 
-func IsDevelopment() bool {
-	return instance.Env == "development"
-}
-
 func IsProduction() bool {
 	return instance.Env == "production"
 }
