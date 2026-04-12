@@ -1,8 +1,12 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "API Server for monitoring GitHub releases and notifying users.",
+        "title": "GitHub Release Notifier API",
+        "contact": {},
+        "version": "1.0"
     },
+    "basePath": "/",
     "paths": {
         "/api/v1/subscribe": {
             "post": {

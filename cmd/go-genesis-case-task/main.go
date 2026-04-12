@@ -25,6 +25,10 @@ import (
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/pkg/databases/redis"
 )
 
+// @title           GitHub Release Notifier API
+// @version         1.0
+// @description     API Server for monitoring GitHub releases and notifying users.
+// @BasePath        /
 func main() {
 	if err := run(); err != nil {
 		slog.Error("Application stopped with error", "error", err)

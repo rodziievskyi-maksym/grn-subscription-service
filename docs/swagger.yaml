@@ -1,3 +1,4 @@
+basePath: /
 definitions:
   domain.Subscription:
     properties:
@@ -26,6 +27,9 @@ definitions:
     type: object
 info:
   contact: {}
+  description: API Server for monitoring GitHub releases and notifying users.
+  title: GitHub Release Notifier API
+  version: "1.0"
 paths:
   /api/v1/subscribe:
     delete:

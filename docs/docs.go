@@ -278,12 +278,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "1.0",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "GitHub Release Notifier API",
+	Description:      "API Server for monitoring GitHub releases and notifying users.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }
