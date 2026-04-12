@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 
@@ -9,6 +10,8 @@ import (
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/domain"
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/pkg/databases/postgres"
 )
+
+var ErrSubscriptionNotFound = errors.New("subscription not found")
 
 type SubscriptionRepository struct {
 	client *postgres.PostgreClient
@@ -45,7 +48,7 @@ func (r *SubscriptionRepository) CreateSubscription(ctx context.Context, subscri
 }
 
 func (r *SubscriptionRepository) GetUniqueRepositories(ctx context.Context) ([]string, error) {
-	query := `SELECT DISTINCT repository FROM subscriptions`
+	query := `SELECT DISTINCT repository FROM subscriptions WHERE is_active = true`
 
 	rows, err := r.client.Pool.Query(ctx, query)
 	if err != nil {
@@ -106,6 +109,47 @@ func (r *SubscriptionRepository) UpdateLastTag(ctx context.Context, id uuid.UUID
 
 	if result.RowsAffected() == 0 {
 		return fmt.Errorf("no subscription found with id %s", id)
+	}
+
+	return nil
+}
+
+func (r *SubscriptionRepository) GetSubscriptionsByEmail(
+	ctx context.Context,
+	email string,
+) ([]domain.Subscription, error) {
+	query := `SELECT id, email, repository, last_seen_tag FROM subscriptions WHERE email = $1 AND is_active = true`
+
+	rows, err := r.client.Pool.Query(ctx, query, email)
+	if err != nil {
+		return nil, fmt.Errorf("query subscriptions error: %w", err)
+	}
+	defer rows.Close()
+
+	var subs []domain.Subscription
+
+	for rows.Next() {
+		var s domain.Subscription
+		if err := rows.Scan(&s.ID, &s.Email, &s.Repository, &s.LastSeenTag); err != nil {
+			return nil, err
+		}
+
+		subs = append(subs, s)
+	}
+
+	return subs, nil
+}
+
+func (r *SubscriptionRepository) DeactivateSubscription(ctx context.Context, email, repo string) error {
+	query := `UPDATE subscriptions SET is_active = false, updated_at = NOW() WHERE email = $1 AND repository = $2`
+
+	res, err := r.client.Pool.Exec(ctx, query, email, repo)
+	if err != nil {
+		return err
+	}
+
+	if res.RowsAffected() == 0 {
+		return ErrSubscriptionNotFound
 	}
 
 	return nil

@@ -112,4 +112,7 @@ test-int:
 rebuild:
 	docker compose down && docker compose up --build -d
 
+make swagger:
+	swag init -g cmd/go-genesis-case-task/main.go
+
 .PNONY: init build run clean local-git git-init postgres create-db drop-db migrate-up migrate-down sqlc test mock migrate-down-last migrate-up-last create-github-actions

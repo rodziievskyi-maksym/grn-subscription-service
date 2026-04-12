@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/domain"
@@ -48,4 +49,32 @@ func (s *SubscriptionUseCase) Subscribe(ctx context.Context, email, repository s
 	}
 
 	return subscription, nil
+}
+
+func (s *SubscriptionUseCase) Unsubscribe(ctx context.Context, email, repository string) error {
+	if email == "" || repository == "" {
+		return errors.New("email and repository are required")
+	}
+
+	return s.repository.DeactivateSubscription(ctx, email, repository)
+}
+
+func (s *SubscriptionUseCase) GetSubscriptionsByEmail(
+	ctx context.Context,
+	email string,
+) ([]domain.Subscription, error) {
+	if email == "" {
+		return nil, errors.New("email is required")
+	}
+
+	subs, err := s.repository.GetSubscriptionsByEmail(ctx, email)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get subscriptions: %w", err)
+	}
+
+	if subs == nil {
+		return []domain.Subscription{}, nil
+	}
+
+	return subs, nil
 }

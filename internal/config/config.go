@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strconv"
 	"sync"
 	"time"
 
@@ -24,6 +25,13 @@ type Config struct {
 	Port            string        `env:"PORT" default:"8080" validate:"required"`
 	Env             string        `env:"ENV" default:"development" validate:"required"`
 	ScannerInterval time.Duration `env:"SCANNER_INTERVAL" default:"5m" validate:"required"`
+	APIKey          string        `env:"API_KEY" validate:"required"`
+
+	RedisHost     string        `env:"REDIS_HOST" default:"localhost" validate:"required"`
+	RedisPort     string        `env:"REDIS_PORT" default:"6379" validate:"required"`
+	RedisPass     string        `env:"REDIS_PASS" default:""`
+	RedisDB       int           `env:"REDIS_DB" default:"0"`
+	RedisCacheTTL time.Duration `env:"REDIS_CACHE_TTL" default:"10m" validate:"required"`
 
 	SMTPHost string `env:"SMTP_HOST" validate:"required"`
 	SMTPPort string `env:"SMTP_PORT" validate:"required"`
@@ -36,6 +44,15 @@ type Config struct {
 	GitHubToken string `env:"GITHUB_TOKEN" validate:"required"`
 }
 
+func parseTimeDuration(value string) time.Duration {
+	duration, err := time.ParseDuration(value)
+	if err != nil {
+		panic(err)
+	}
+
+	return duration
+}
+
 func NewConfig(validator *validator.Validate, envPath ...string) error {
 	once.Do(func() {
 		slog.Info("Initializing configuration...")
@@ -45,17 +62,20 @@ func NewConfig(validator *validator.Validate, envPath ...string) error {
 			return
 		}
 
-		scannerInterval, err := time.ParseDuration(os.Getenv("SCANNER_INTERVAL"))
-		if err != nil {
-			errInit = errors.Join(errors.New("failed to parse SCANNER_INTERVAL"), err)
-			return
-		}
+		redisDB, _ := strconv.Atoi(os.Getenv("REDIS_DB"))
 
 		cfg := &Config{
 			Host:            os.Getenv("HOST"),
 			Port:            os.Getenv("PORT"),
 			Env:             os.Getenv("ENV"),
-			ScannerInterval: scannerInterval,
+			ScannerInterval: parseTimeDuration(os.Getenv("SCANNER_INTERVAL")),
+			APIKey:          os.Getenv("API_KEY"),
+
+			RedisHost:     os.Getenv("REDIS_HOST"),
+			RedisPort:     os.Getenv("REDIS_PORT"),
+			RedisPass:     os.Getenv("REDIS_PASS"),
+			RedisDB:       redisDB,
+			RedisCacheTTL: parseTimeDuration(os.Getenv("REDIS_CACHE_TTL")),
 
 			SMTPHost: os.Getenv("SMTP_HOST"),
 			SMTPPort: os.Getenv("SMTP_PORT"),
@@ -105,4 +125,8 @@ func IsProduction() bool {
 
 func GetServerAddress() string {
 	return fmt.Sprintf("%s:%s", instance.Host, instance.Port)
+}
+
+func GetRedisAddress() string {
+	return fmt.Sprintf("%s:%s", instance.RedisHost, instance.RedisPort)
 }

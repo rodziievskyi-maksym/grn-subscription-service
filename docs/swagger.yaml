@@ -1,0 +1,176 @@
+definitions:
+  domain.Subscription:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      last_seen_tag:
+        type: string
+      repository:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  handler.subscribeRequest:
+    properties:
+      email:
+        type: string
+      repository:
+        type: string
+    required:
+    - email
+    - repository
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/subscribe:
+    delete:
+      consumes:
+      - application/json
+      description: Deactivates an active subscription (Soft delete)
+      parameters:
+      - description: Subscription details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.subscribeRequest'
+      - description: API Key
+        in: header
+        name: X-API-KEY
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content - Successfully unsubscribed
+        "400":
+          description: Invalid JSON
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Subscription not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Unsubscribe from repository updates
+      tags:
+      - subscriptions
+    post:
+      consumes:
+      - application/json
+      description: Creates a new subscription or reactivates an existing one to track
+        GitHub releases
+      parameters:
+      - description: Subscription details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.subscribeRequest'
+      - description: API Key
+        in: header
+        name: X-API-KEY
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Subscription'
+        "400":
+          description: Invalid JSON or email format
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Repository not found on GitHub
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Subscribe to repository updates
+      tags:
+      - subscriptions
+  /api/v1/subscriptions:
+    get:
+      consumes:
+      - application/json
+      description: Returns a list of active repository subscriptions for a given email
+      parameters:
+      - description: User Email
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: API Key
+        in: header
+        name: X-API-KEY
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Subscription'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get user subscriptions
+      tags:
+      - subscriptions
+swagger: "2.0"

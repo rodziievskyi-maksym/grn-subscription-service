@@ -50,7 +50,7 @@ func (c *client) GetLatestTag(ctx context.Context, owner, repo string) (string, 
 				if resp.Rate.Remaining == 0 {
 					return "", &RateLimitError{
 						ResetTime: resp.Rate.Reset.Time,
-						Message:   resp.Status,
+						Message:   ErrRateLimitExceeded.Error(),
 					}
 				}
 			}

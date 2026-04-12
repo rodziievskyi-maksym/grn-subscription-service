@@ -15,12 +15,14 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/config"
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/delivery/handler"
+	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/cache"
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/github"
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/repository"
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/server"
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/usecase"
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/worker"
 	"github.com/rodziievskyi-maksym/go-genesis-case-task/pkg/databases/postgres"
+	"github.com/rodziievskyi-maksym/go-genesis-case-task/pkg/databases/redis"
 )
 
 func main() {
@@ -46,15 +48,25 @@ func run() error {
 	}
 	defer client.Close()
 
-	ghClient := github.NewClient(config.Cfg().GitHubToken)
+	redisClient, err := redis.NewRedisClient(initCtx, config.GetRedisAddress(), config.Cfg().RedisPass)
+	if err != nil {
+		return fmt.Errorf("failed to connect to redis: %w", err)
+	}
+	defer redisClient.Close()
+
+	tagCache := cache.NewTagCache(redisClient.Client, config.Cfg().RedisCacheTTL)
+
+	baseGhClient := github.NewClient(config.Cfg().GitHubToken)
+	cachedGhClient := github.NewCachedGitHubProvider(baseGhClient, tagCache)
+
 	subRepo := repository.NewSubscriptionRepository(client)
-	subUseCase := usecase.NewSubscriptionUseCase(subRepo, ghClient)
+	subUseCase := usecase.NewSubscriptionUseCase(subRepo, cachedGhClient)
 	subHandler := handler.NewSubscriptionHandler(subUseCase, validation)
 
 	appCtx, appCancel := context.WithCancel(context.Background())
 	defer appCancel()
 
-	scanner, err := worker.NewScanner(subRepo, ghClient)
+	scanner, err := worker.NewScanner(subRepo, cachedGhClient)
 	if err != nil {
 		return fmt.Errorf("failed to create scanner: %w", err)
 	}
@@ -87,6 +99,7 @@ func run() error {
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer shutdownCancel()
 
+	// gracefully shutdown the server
 	if err := srv.Shutdown(shutdownCtx); err != nil {
 		slog.Error("Server forced to shutdown", "error", err)
 	}
