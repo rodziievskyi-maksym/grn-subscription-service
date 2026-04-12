@@ -26,6 +26,8 @@ COPY --from=builder /build/go-genesis-case-task-api .
 
 COPY --from=builder /build/.env .
 
+COPY --from=builder /build/web ./web
+
 EXPOSE 8080
 
 CMD ["./go-genesis-case-task-api"]

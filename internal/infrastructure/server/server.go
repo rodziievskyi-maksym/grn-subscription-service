@@ -44,6 +44,8 @@ func NewHTTPServer(sh *handler.SubscriptionHandler) *Server {
 		c.JSON(http.StatusOK, gin.H{"status": "UP"})
 	})
 
+	router.StaticFile("/home", "./web/index.html")
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	api := router.Group("/api/v1").Use(middleware.APIKeyAuth(config.Cfg().APIKey))
