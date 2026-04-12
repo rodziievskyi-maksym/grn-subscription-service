@@ -11,9 +11,7 @@ RUN go mod download
 COPY . .
 
 ARG PATH_TO_MAIN=./cmd/go-genesis-case-task/
-RUN CGO_ENABLED=0 GOOS=linux go build \
-    -ldflags="-s -w" \
-    -o go-genesis-case-task-api $PATH_TO_MAIN
+RUN go build -o go-genesis-case-task-api $PATH_TO_MAIN
 
 FROM alpine:latest
 

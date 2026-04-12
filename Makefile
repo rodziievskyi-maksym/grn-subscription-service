@@ -14,7 +14,7 @@ GITHUB_ACTIONS_GO_DEFAULT_CONFIG = "name: Go\n\non:\n  push:\n    branches: [ \"
 
 #PostgreSQL
 POSTGRES_USER = "dev"
-POSTGRES_PASS = "devpass"
+POSTGRES_PASS = "devpassv2"
 POSTGRES_DB = "genesis-case-task-db"
 POSTGRES_PORT = "5435"
 POSTGRES_URL = "postgresql://${POSTGRES_USER}:${POSTGRES_PASS}@localhost:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable"
@@ -71,7 +71,7 @@ create-github-actions:
 
 
 ## Database operations
-DOCKER_CONTAINER_NAME = go-universe-test-services-db
+DOCKER_CONTAINER_NAME = genesis-case-task-db
 postgres:
 	docker run --name ${DOCKER_CONTAINER_NAME} -p ${POSTGRES_PORT}:5432 -e POSTGRES_USER=${POSTGRES_USER} -e POSTGRES_PASSWORD=${POSTGRES_PASS} -d postgres:latest
 
@@ -82,7 +82,7 @@ drop-db:
 	docker exec -it ${DOCKER_CONTAINER_NAME} dropdb ${POSTGRES_DB}
 
 db-connect:
-	docker exec -it ${DOCKER_CONTAINER_NAME} psql -d go-universe-test-services -U dev -W
+	docker exec -it ${DOCKER_CONTAINER_NAME} psql -d genesis-case-task-db -U dev -W
 
 #Migration commands
 migrate-up:
@@ -105,5 +105,11 @@ sqlc:
 
 test:
 	go test -v -cover ./...
+
+test-int:
+	go test -v -tags=integration ./...
+
+rebuild:
+	docker compose down && docker compose up --build -d
 
 .PNONY: init build run clean local-git git-init postgres create-db drop-db migrate-up migrate-down sqlc test mock migrate-down-last migrate-up-last create-github-actions
