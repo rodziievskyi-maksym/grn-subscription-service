@@ -32,6 +32,10 @@
 </div>
 
 <script>
+    const appConfig = {
+        apiKey: {{ printf "%q" .APIKey }}
+    };
+
     const form = document.getElementById('subscribeForm');
     const msgDiv = document.getElementById('message');
 
@@ -53,7 +57,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-API-KEY': 'grn-subscription-service-secret-key' // Тут має бути твій ключ з .env
+                    'X-API-KEY': appConfig.apiKey
                 },
                 body: JSON.stringify(data)
             });

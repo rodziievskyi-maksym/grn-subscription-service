@@ -36,6 +36,7 @@ func NewHTTPServer(sh *handler.SubscriptionHandler, cfg *config.Config) *Server 
 
 	router := gin.Default()
 	_ = router.SetTrustedProxies([]string{"127.0.0.1"})
+	router.LoadHTMLFiles("./web/index.html")
 
 	prometheusMiddleware := ginprometheus.NewPrometheus("gin")
 	prometheusMiddleware.Use(router)
@@ -44,7 +45,11 @@ func NewHTTPServer(sh *handler.SubscriptionHandler, cfg *config.Config) *Server 
 		c.JSON(http.StatusOK, gin.H{"status": "UP"})
 	})
 
-	router.StaticFile("/home", "./web/index.html")
+	router.GET("/home", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"APIKey": cfg.APIKey,
+		})
+	})
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
