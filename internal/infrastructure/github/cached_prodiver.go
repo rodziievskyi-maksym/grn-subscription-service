@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/cache"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/infrastructure/cache"
 )
 
 type CachedGitHubProvider struct {

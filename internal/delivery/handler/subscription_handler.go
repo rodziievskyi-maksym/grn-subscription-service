@@ -6,10 +6,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/domain"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/github"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/repository"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/usecase"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/domain"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/infrastructure/github"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/infrastructure/repository"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/usecase"
 )
 
 type SubscriptionHandler struct {

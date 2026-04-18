@@ -13,17 +13,17 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/config"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/delivery/handler"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/cache"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/email"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/github"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/repository"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/server"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/usecase"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/worker"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/pkg/databases/postgres"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/pkg/databases/redis"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/config"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/delivery/handler"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/infrastructure/cache"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/infrastructure/email"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/infrastructure/github"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/infrastructure/repository"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/infrastructure/server"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/usecase"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/worker"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/pkg/databases/postgres"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/pkg/databases/redis"
 )
 
 // @title           GitHub Release Notifier API

@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/go-co-op/gocron/v2"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/email"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/github"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/infrastructure/repository"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/infrastructure/email"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/infrastructure/github"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/infrastructure/repository"
 )
 
 type Scanner struct {

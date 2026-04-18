@@ -3,11 +3,11 @@ name: ${PROJECT_NAME}
 #network
 networks:
   public:
-    name: ${PROJECT_NAME:-genesis-case-task}-public
+    name: ${PROJECT_NAME:-grn-subscription-service}-public
     driver: bridge
 
   private:
-    name: ${PROJECT_NAME:-genesis-case-task}-private
+    name: ${PROJECT_NAME:-grn-subscription-service}-private
     driver: bridge
     internal: true #No external access - database isolated
     ipam:
@@ -32,7 +32,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    container_name: ${PROJECT_NAME:-genesis-case-task}-go-backend
+    container_name: ${PROJECT_NAME:-grn-subscription-service}-go-backend
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -61,16 +61,16 @@ services:
 
   db:
     image: postgres:17-alpine
-    container_name: ${PROJECT_NAME:-genesis-case-task}-db
+    container_name: ${PROJECT_NAME:-grn-subscription-service}-db
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-dev} -d ${DB_NAME:-genesis-case-task-db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-dev} -d ${DB_NAME:-grn-subscription-service-db}"]
       interval: 10s
       timeout: 5s
       retries: 5
     environment:
       - POSTGRES_USER=${DB_USER:-dev}
-      - POSTGRES_DB=${DB_NAME:-genesis-case-task-db}
+      - POSTGRES_DB=${DB_NAME:-grn-subscription-service-db}
       - POSTGRES_PASSWORD_FILE=/run/secrets/db_pass_secret
     secrets:
       - db_pass_secret
@@ -82,7 +82,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: ${PROJECT_NAME:-geneis-case-task}-redis
+    container_name: ${PROJECT_NAME:-grn-subscription-service}-redis
     restart: unless-stopped
     command: [ "redis-server", "--appendonly", "yes" ]
     ports:
@@ -99,7 +99,7 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
-    container_name: ${PROJECT_NAME:-genesis-case-task}-prometheus
+    container_name: ${PROJECT_NAME:-grn-subscription-service}-prometheus
     restart: unless-stopped
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml

@@ -19,6 +19,7 @@ type Config struct {
 	Env             string        `env:"ENV" default:"development" validate:"required"`
 	ScannerInterval time.Duration `env:"SCANNER_INTERVAL" default:"5m" validate:"required"`
 	APIKey          string        `env:"API_KEY" validate:"required"`
+	TestBool        bool          `env:"TEST_BOOL" default:"false"`
 
 	RedisHost     string        `env:"REDIS_HOST" default:"localhost" validate:"required"`
 	RedisPort     string        `env:"REDIS_PORT" default:"6379" validate:"required"`
@@ -90,7 +91,14 @@ func setFieldValue(field reflect.Value, raw string) error {
 		}
 
 		field.SetInt(parsed)
-	case reflect.Invalid, reflect.Bool, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
+	case reflect.Bool:
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return fmt.Errorf("invalid boolean: %w", err)
+		}
+
+		field.SetBool(parsed)
+	case reflect.Invalid, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
 		reflect.Uintptr, reflect.Float32, reflect.Float64, reflect.Complex64, reflect.Complex128, reflect.Array,
 		reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Pointer, reflect.Slice, reflect.Struct,
 		reflect.UnsafePointer:

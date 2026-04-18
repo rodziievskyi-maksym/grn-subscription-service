@@ -1,6 +1,6 @@
 global:
   scrape_interval: 5s
 scrape_configs:
-  - job_name: 'genesis-case-task'
+  - job_name: 'grn-subscription-service'
     static_configs:
       - targets: ['go-backend:8080']

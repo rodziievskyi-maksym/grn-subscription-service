@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/smtp"
 
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/config"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/config"
 )
 
 type SMTPProvider struct {

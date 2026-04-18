@@ -10,8 +10,8 @@ RUN go mod download
 
 COPY . .
 
-ARG PATH_TO_MAIN=./cmd/go-genesis-case-task/
-RUN go build -o go-genesis-case-task-api $PATH_TO_MAIN
+ARG PATH_TO_MAIN=./cmd/grn-subscription-service/
+RUN go build -o grn-subscription-service-api $PATH_TO_MAIN
 
 FROM alpine:latest
 
@@ -22,7 +22,7 @@ RUN apk --no-cache add curl ca-certificates
 RUN adduser -D appuser
 USER appuser
 
-COPY --from=builder /build/go-genesis-case-task-api .
+COPY --from=builder /build/grn-subscription-service-api .
 
 COPY --from=builder /build/.env .
 
@@ -30,5 +30,4 @@ COPY --from=builder /build/web ./web
 
 EXPOSE 8080
 
-CMD ["./go-genesis-case-task-api"]
-
+CMD ["./grn-subscription-service-api"]

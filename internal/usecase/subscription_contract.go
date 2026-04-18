@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/domain"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/domain"
 )
 
 type SubscriptionUseCaseContract interface {

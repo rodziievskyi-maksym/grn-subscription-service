@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/domain"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/domain"
 	"github.com/stretchr/testify/mock"
 )
 

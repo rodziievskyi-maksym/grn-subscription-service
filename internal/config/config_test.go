@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/rodziievskyi-maksym/go-genesis-case-task/internal/config"
+	"github.com/rodziievskyi-maksym/grn-subscription-service/internal/config"
 	"github.com/stretchr/testify/require"
 )
 

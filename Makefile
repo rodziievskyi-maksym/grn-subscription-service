@@ -1,4 +1,4 @@
-PROJECT_NAME = "go-genesis-case-task"
+PROJECT_NAME = "grn-subscription-service"
 
 #Local settings
 BINARY_NAME = ${PROJECT_NAME}
@@ -15,7 +15,7 @@ GITHUB_ACTIONS_GO_DEFAULT_CONFIG = "name: Go\n\non:\n  push:\n    branches: [ \"
 #PostgreSQL
 POSTGRES_USER = "dev"
 POSTGRES_PASS = "devpassv2"
-POSTGRES_DB = "genesis-case-task-db"
+POSTGRES_DB = "grn-subscription-service-db"
 POSTGRES_PORT = "5435"
 POSTGRES_URL = "postgresql://${POSTGRES_USER}:${POSTGRES_PASS}@localhost:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable"
 
@@ -71,7 +71,7 @@ create-github-actions:
 
 
 ## Database operations
-DOCKER_CONTAINER_NAME = genesis-case-task-db
+DOCKER_CONTAINER_NAME = grn-subscription-service-db
 postgres:
 	docker run --name ${DOCKER_CONTAINER_NAME} -p ${POSTGRES_PORT}:5432 -e POSTGRES_USER=${POSTGRES_USER} -e POSTGRES_PASSWORD=${POSTGRES_PASS} -d postgres:latest
 
@@ -82,7 +82,7 @@ drop-db:
 	docker exec -it ${DOCKER_CONTAINER_NAME} dropdb ${POSTGRES_DB}
 
 db-connect:
-	docker exec -it ${DOCKER_CONTAINER_NAME} psql -d genesis-case-task-db -U dev -W
+	docker exec -it ${DOCKER_CONTAINER_NAME} psql -d grn-subscription-service-db -U dev -W
 
 #Migration commands
 migrate-up:
@@ -113,6 +113,25 @@ rebuild:
 	docker compose down && docker compose up --build -d
 
 make swagger:
-	swag init -g cmd/go-genesis-case-task/main.go
+	swag init -g cmd/grn-subscription-service/main.go
+
+version:
+	@echo v$(VERSION)
+
+SEMVER_TYPES := major minor patch
+BUMP_TARGETS := $(addprefix bump-,$(SEMVER_TYPES))
+
+.PHONY: $(BUMP_TARGETS)
+
+$(BUMP_TARGETS):
+	$(eval bump_type := $(strip $(word 2,$(subst -, ,$@))))
+	$(eval f := $(words $(shell a="$(SEMVER_TYPES)";echo $${a/$(bump_type)*/$(bump_type)} )))
+	$(eval new_version := $(shell echo $(VERSION) | awk -F. -v OFS=. -v f=$(f) '{ $$f++ } 1'))
+	$(eval $(shell echo $(new_version) > VERSION))
+	git add .
+	git commit -m "v$(new_version)"
+	git push
+	git tag -a "v$(new_version)" -m "v$(new_version)"
+	git push --tag
 
 .PNONY: init build run clean local-git git-init postgres create-db drop-db migrate-up migrate-down sqlc test mock migrate-down-last migrate-up-last create-github-actions

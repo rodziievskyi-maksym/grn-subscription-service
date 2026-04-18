@@ -48,14 +48,14 @@ ENV=development
 HOST=0.0.0.0
 PORT=8080
 SCANNER_INTERVAL=5m
-API_KEY=genesis-secret-key
+API_KEY=grn-subscription-service-secret-key
 
 #SMTP
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
 SMTP_PASS=
-SMTP_FROM=noreply@genesis-case-task.com
+SMTP_FROM=noreply@grn-subscription-service.com
 
 # Redis
 REDIS_HOST=redis
@@ -65,11 +65,11 @@ REDIS_DB=0
 REDIS_CACHE_TTL=10m
 
 #Database
-POSTGRES_DSN=postgresql://dev:devpassv2@db:5432/genesis-case-task-db?sslmode=disable
+POSTGRES_DSN=postgresql://dev:devpassv2@db:5432/grn-subscription-service-db?sslmode=disable
 
 # Database Configuration
 DB_USER=dev
-DB_NAME=genesis-case-task-db
+DB_NAME=grn-subscription-service-db
 DB_PASS_CONTAINER_PATH=/run/secrets/db_pass_secret
 
 GITHUB_TOKEN=

@@ -1,4 +1,4 @@
-module github.com/rodziievskyi-maksym/go-genesis-case-task
+module github.com/rodziievskyi-maksym/grn-subscription-service
 
 go 1.26.2
 
