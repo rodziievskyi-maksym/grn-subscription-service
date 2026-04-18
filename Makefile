@@ -115,6 +115,11 @@ rebuild:
 make swagger:
 	swag init -g cmd/grn-subscription-service/main.go
 
+
+VERSION := $(shell cat VERSION | sed -Ee 's/^v|-.*//')
+
+.PHONY: version
+
 version:
 	@echo v$(VERSION)
 
